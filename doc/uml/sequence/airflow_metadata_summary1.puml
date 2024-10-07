@@ -1,0 +1,346 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+participant airflow
+participant oma.w.workflow_factory.py
+participant oma.w.i.common.py
+participant oma.w.i.base.py
+participant m.w.metadata.py
+participant m.i.s.d.h.metadata.py
+participant m.i.a.topology_runner.py
+participant m.i.s.d.database_service.py
+participant m.i.s.d.common_db_source.py
+participant m.utils.filters.py
+participant m.utils.tag_utils.py
+participant m.i.l.sql_lineage.py
+participant m.i.s.d.sql_column_handler.py
+participant sqlalchemy.engine.reflection.py
+participant m.i.s.d.h.utils.py
+participant pyhive.sqlalchemy_hive.py
+participant m.u.fqn.py
+participant m.i.o.ometa_api.py
+participant m.i.s.metadata_rest.py
+
+== DAG 인스턴스 생성 ==
+
+activate airflow
+airflow -> oma.w.workflow_factory.py ++:
+oma.w.workflow_factory.py -> oma.w.workflow_factory.py : workflow = WorkflowFactory.create(<json path>)
+note left : workflow: IngestionPipeline(<json>)
+oma.w.workflow_factory.py -> oma.w.workflow_factory.py : WorkflowFactory.generate_dag()
+oma.w.workflow_factory.py -> oma.w.workflow_factory.py : DAG = WorkflowFactory.get_dag()
+oma.w.workflow_factory.py -> airflow : DAG
+deactivate
+
+== DAG 인스턴스 실행 ==
+
+airflow -> airflow ++ : task run
+airflow -> oma.w.i.common.py ++ : metadata_ingestion_workflow(<OpenMetadataWorkflowConfig>)
+oma.w.i.common.py -> oma.w.i.common.py : config = json.loads(workflow_config.json())
+note left : workflow_config: OpenMetadataWorkflowConfig
+
+== MetadataWorkflow 인스턴스 생성 ==
+oma.w.i.common.py -> oma.w.i.common.py ++ : workflow = MetadataWorkflow.create(config)
+oma.w.i.common.py -> oma.w.i.common.py ++ : self.source: HiveSource = self._get_source()
+
+oma.w.i.common.py -> oma.w.i.common.py : sink = self._get_sink()
+oma.w.i.common.py -> oma.w.i.common.py : self.steps = (sink,)
+note left : metadata injestion 의 steps는 rest-sink 하나.
+deactivate
+
+== MetadataWorkflow 인스턴스 실행 ==
+oma.w.i.common.py -> oma.w.i.common.py ++ : workflow.execute()
+
+oma.w.i.common.py -> oma.w.i.base.py ++ : _execute_internal()
+loop for record in self.source.run()
+  oma.w.i.base.py -> m.i.s.d.h.metadata.py ++ : self.source.run()
+  note left : HiveSource()
+
+  m.i.s.d.h.metadata.py -> m.i.a.topology_runner.py ++ : process_nodes(nodes: List[TopologyNode])
+  loop for node in nodes -> root
+
+== root node ==
+    m.i.a.topology_runner.py -> m.i.s.d.database_service.py ++ : get_services()
+    note left : node.producer
+    m.i.s.d.database_service.py -> m.i.a.topology_runner.py -- : element: Source : DatabaseServiceSource
+    loop for stage in node.stages
+
+== root node - database_service stage ==
+      loop for entity_request in stage_fn(element)
+        m.i.a.topology_runner.py -> m.i.s.d.database_service.py ++ : yield_create_request_database_service(element)
+        note left: stage.processor
+        m.i.s.d.database_service.py -> m.i.a.topology_runner.py -- : entity_request: CreateDatabaseServiceRequest()
+
+        m.i.a.topology_runner.py -> m.i.a.topology_runner.py : yield from sink_request(stage: NodeStage, entity_request)
+        note left
+          데이터베이스서비스 생성
+          stage.context 업데이트
+        end note
+
+        m.i.a.topology_runner.py -> m.i.a.topology_runner.py : self._init_cache_dict(stage=stage, child_nodes=child_nodes)
+        note left: api서버로부터 캐싱
+      end
+    end
+
+    loop for stage in node.stages:
+      m.i.a.topology_runner.py -> m.i.a.topology_runner.py : self.clear_context(stage=stage)
+      note left: stage들 context clear
+    end
+
+    m.i.a.topology_runner.py -> m.i.a.topology_runner.py ++ : process_nodes(nodes: List[TopologyNode])
+    loop for node in nodes -> database
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''' database node
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+== database node ==
+      m.i.a.topology_runner.py -> m.i.s.d.common_db_source.py ++ : get_database_names()
+      note left: stage.processor
+      m.i.s.d.common_db_source.py -> m.i.a.topology_runner.py -- : element
+      note left: 'default'
+      loop for stage in node.stages
+== database node - database stage ==
+        loop for entity_request in stage_fn(element)
+          m.i.a.topology_runner.py -> m.i.s.d.common_db_source.py ++ : yield_database(element)
+          m.i.s.d.common_db_source.py -> m.i.a.topology_runner.py -- : entity_request: CreateDatabaseRequest()
+          m.i.a.topology_runner.py -> m.i.a.topology_runner.py : yield from sink_request(stage: NodeStage, entity_request)
+          note left: 'default' DB 생성
+        end
+
+        m.i.a.topology_runner.py -> m.i.a.topology_runner.py ++ : process_nodes(nodes: List[TopologyNode])
+        loop for node in nodes -> databaseSchema
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''' databaseSchema node
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+== databaseSchema node ==
+          m.i.a.topology_runner.py -> m.i.s.d.common_db_source.py ++ : get_database_schema_names(element)
+          note left : node.producer
+          m.i.s.d.common_db_source.py -> m.i.s.d.database_service.py ++ : _get_filtered_schema_names()
+          loop for schema_name in self.get_raw_database_schema_names()
+            m.i.s.d.database_service.py -> m.i.s.d.common_db_source.py ++ : get_raw_database_schema_names()
+            m.i.s.d.common_db_source.py -> sqlalchemy.engine.reflection.py ++ : self.inspector.get_schema_names()
+            sqlalchemy.engine.reflection.py -> pyhive.sqlalchemy_hive.py ++ : get_schema_names(connection, ...)
+            note left : 'SHOW SCHEMAS'
+            pyhive.sqlalchemy_hive.py -> sqlalchemy.engine.reflection.py -- :
+            sqlalchemy.engine.reflection.py -> m.i.s.d.common_db_source.py -- : yield schema_name. <atomic, ...>
+            m.i.s.d.common_db_source.py -> m.i.s.d.database_service.py -- : schema_name <atomic, ...>
+            m.i.s.d.database_service.py -> m.utils.filters.py ++ : filter_by_schema()
+            m.utils.filters.py -> m.i.s.d.database_service.py -- : true or false
+            m.i.s.d.database_service.py -> m.i.s.d.common_db_source.py -- : 'atomic'
+          end
+
+          m.i.s.d.common_db_source.py -> m.i.a.topology_runner.py -- : 'atomic'
+          loop for stage in node.stages
+== databaseSchema node - tags stage ==
+            loop for entity_request in stage_fn(element)
+              m.i.a.topology_runner.py -> m.i.s.d.database_service.py ++ : yield_database_schema_tag_details(element)
+              note left : stage.processor 미구현
+              m.i.s.d.database_service.py -> m.i.a.topology_runner.py -- :
+              m.i.a.topology_runner.py -> m.i.a.topology_runner.py : yield from sink_request(stage: NodeStage, entity_request)
+            end
+
+== databaseSchema node - database_schema stage ==
+            loop for entity_request in stage_fn(element)
+              m.i.a.topology_runner.py -> m.i.s.d.database_service.py ++ : yield_database_schema(element)
+              m.i.s.d.database_service.py -> m.i.a.topology_runner.py -- : entity_request: CreateDatabaseSchemaRequest
+              m.i.a.topology_runner.py -> m.i.a.topology_runner.py : yield from sink_request(stage: NodeStage, entity_request)
+              note left : 'atomic' 스키마 생성
+            end
+          end
+
+          m.i.a.topology_runner.py -> m.i.a.topology_runner.py ++ : process_nodes(nodes: List[TopologyNode])
+          loop for node in nodes
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''' table node
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+== table node ==
+            m.i.a.topology_runner.py -> m.i.s.d.common_db_source.py ++ : get_tables_name_and_type()
+            note left : node.producer
+            loop table_and_type in self.query_table_names_and_types(schema_name)
+              m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py : query_table_names_and_types()
+              note left : if self.source_config.includeTables:
+              m.i.s.d.common_db_source.py -> sqlalchemy.engine.reflection.py ++ : self.inspector.get_table_names()
+              sqlalchemy.engine.reflection.py -> pyhive.sqlalchemy_hive.py ++ : m.i.s.d.h.utils.get_table_names(connection, schema, ...)
+              note left : 'SHOW TABLES IN atomic'
+              pyhive.sqlalchemy_hive.py -> sqlalchemy.engine.reflection.py -- :
+              sqlalchemy.engine.reflection.py -> m.i.s.d.common_db_source.py -- :
+              m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py : filter_by_table()
+              note left : 테이블 필터 처리
+              m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py : yield table, type
+            end
+
+            loop table_and_type in self.query_view_names_and_types(schema_name)
+              m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py : query_view_names_and_types()
+              note left : if self.source_config.includeViews:
+              m.i.s.d.common_db_source.py -> sqlalchemy.engine.reflection.py ++ : self.inspector.get_view_names()
+              sqlalchemy.engine.reflection.py -> pyhive.sqlalchemy_hive.py ++ : m.i.s.d.h.utils.get_view_names(connection, schema, ...)
+              pyhive.sqlalchemy_hive.py -> pyhive.sqlalchemy_hive.py : m.i.s.d.h.utils.get_table_names(connection, schema, ...)
+              note left
+                'SHOW VIEWS IN atomic'
+                hive dialect의 get_view_names()는 tableType 으로 구분하는 쿼리가 없어서
+                dialect의 함수를 새로 구현 한 것으로 보임.
+              end note
+              pyhive.sqlalchemy_hive.py -> sqlalchemy.engine.reflection.py -- :
+              sqlalchemy.engine.reflection.py -> m.i.s.d.common_db_source.py -- :
+              m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py : filter_by_table()
+              note left : 테이블 필터 처리
+              m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py : yield table, type
+            end
+
+            m.i.s.d.common_db_source.py -> m.i.a.topology_runner.py -- : Tuple('atomic_csv', TableType.Regular: 'Regular')
+            loop for stage in node.stages
+== table node - tags stage ==
+              loop for entity_request in stage_fn(element)
+                m.i.a.topology_runner.py -> m.i.s.d.database_service.py ++ : entity_request = yield_table_tags(element)
+                note left : stage.processor 미구현
+                m.i.s.d.database_service.py -> m.i.a.topology_runner.py -- :
+                m.i.a.topology_runner.py -> m.i.a.topology_runner.py : yield from sink_request(stage: NodeStage, entity_request)
+              end
+
+== table node - table stage ==
+              loop for entity_request in stage_fn(element)
+                m.i.a.topology_runner.py -> m.i.s.d.common_db_source.py ++ : yield_table(element)
+                note left: stage.processor
+                m.i.s.d.common_db_source.py -> m.i.s.d.sql_column_handler.py ++ : get_columns_and_constraints(schema, table, dbnm, inspector)
+
+== table node - table stage - constraints column  ==
+                m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : table_constraints = []
+                note left : 테이블 제약조건 entities
+                m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py ++ : _get_columns_with_constraints(schema, table, inspector)
+                m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py -- : pk_columns, unique_columns, foreign_columns
+                m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : table_constraints 구성
+                m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : table_constraints.append(TableConstraint())
+
+== table node - table stage - columns  ==
+                m.i.s.d.sql_column_handler.py -> sqlalchemy.engine.reflection.py ++ : get_columns(table, schema, dbnm)
+
+                sqlalchemy.engine.reflection.py -> m.i.s.d.h.utils.py ++ : get_columns(conn, table, schema, ...)
+                note left
+                  hive dialect 구현 함수 대신
+                  openmeta 구현함수 사용
+                end note
+                m.i.s.d.h.utils.py -> pyhive.sqlalchemy_hive.py ++ : _get_table_columns(conn, table, schema)
+                note left
+                  "DESCRIBE [schema.]<table>"
+                end note
+                pyhive.sqlalchemy_hive.py -> m.i.s.d.h.utils.py -- : rows: List<(column, type, comment)>
+                m.i.s.d.h.utils.py -> m.i.s.d.h.utils.py : rows 컬럼명 공백 제거(strip),\n"# col_name" 항목 제거, type 검증
+                m.i.s.d.h.utils.py -> sqlalchemy.engine.reflection.py -- : result: List<Dict>
+
+                sqlalchemy.engine.reflection.py -> m.i.s.d.sql_column_handler.py -- : columns: List<Dict>
+                loop for column in columns
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : (data_type_display, arr_data_type, parsed_string) = _process_col_type()
+                  note left : 컬럼 복합 타입 여부 확인
+
+== table node - table stage - columns - 기본타입 처리(parsed_string == None) 시작 ==
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : process_additional_table_constraints(column, table_constraints)
+                  note left : 컬럼별 테이블 제약조건 처리. <b>미구현.
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : col_type = ColumnTypeParser.get_column_type(column["type"])
+                  note left : col_type == None 이면 UNKNOWN 처리
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : col_constraint = self._get_column_constraints(column, pk_columns, column_level_unique_constraints)
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : col_data_length = self._check_col_length(col_type, column["type"])
+                  note left : None 이면 1
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : precision = ColumnTypeParser.check_col_precision(col_type, column["type"])
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : data_type_display = self._get_display_datatype(type, length, precision ...)
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : om_column = Column(...)
+== table node - table stage - columns - 기본타입 처리(parsed_string == None) 끝 ==
+== table node - table stage - columns - 복합타입 처리(parsed_string != None) 시작 ==
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : om_column<Column(**parsed_string)> = _process_complex_col_type
+
+== table node - table stage - columns - 복합타입 처리(parsed_string != None) 끝 ==
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : om_column.tags = self.get_column_tag_labels(table_name=table_name, column=column)
+                  m.i.s.d.sql_column_handler.py -> m.i.s.d.sql_column_handler.py : table_columns.append(om_column)
+                end
+
+                m.i.s.d.sql_column_handler.py -> m.i.s.d.common_db_source.py -- : table_columns, table_constraints, foreign_columns
+
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py ++ : get_view_definition(type, table, schema, inspector)
+
+                m.i.s.d.common_db_source.py -> sqlalchemy.engine.reflection.py ++ : self.inspector.get_view_definition()
+                sqlalchemy.engine.reflection.py -> m.i.s.d.h.utils.py ++ : get_view_definition(connection, view_name, schema, ...)
+                note left
+                  f"SHOW CREATE TABLE [schema.]<view_name>"
+                end note
+                m.i.s.d.h.utils.py -> sqlalchemy.engine.reflection.py -- : view_definition: str
+                sqlalchemy.engine.reflection.py -> m.i.s.d.common_db_source.py -- : view_definition: str
+                note left : m.i.s.d.h.utils.get_view_definition
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py -- : view_definition
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py ++ : update_table_constraints(table_constraints, foreign_columns)
+                note left : foreign키 확인하고 있으면 table 제약조건에 추가 한다.
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py -- : table_constraints: list
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py ++ : CreateTableRequest()
+                note left
+                  request_entity 생성
+                  CreateTableRequest(
+                    table_name, table_type, columns, table_constraints,view_definition
+                    description, tags, sourceUrl,
+                    hive 미구현 -> tableType, tablePartition
+                  )
+                end note
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py ++ : get_table_description(schema, table, inspector)
+                m.i.s.d.common_db_source.py -> sqlalchemy.engine.reflection.py ++ : self.inspector.get_table_comment(table, schema, ...)
+                sqlalchemy.engine.reflection.py -> m.i.s.d.h.utils.py ++ : get_table_comment(conn, table, schema, ...)
+                note left : describe formatted {schema_name}.{table_name}
+                m.i.s.d.h.utils.py -> sqlalchemy.engine.reflection.py -- : {"text": <comment>}
+                sqlalchemy.engine.reflection.py -> m.i.s.d.common_db_source.py -- : {"text": <comment>}
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py -- : description
+
+                m.i.s.d.common_db_source.py -> m.i.s.d.database_service.py ++ : get_tag_labels(table)
+                m.i.s.d.database_service.py -> m.i.s.d.common_db_source.py -- : tags
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py ++ : get_source_url(table, schema, dbnm, tbl_type)
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py -- : sourceUrl
+                note left : hive source에 get_source_url() 미구현
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py -- : table_request: CreateTableRequest()
+
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py ++ : is_partitioned, partition_details = self.get_table_partition_details(...)
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py -- : return False, None
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py : table_request.tableType = 'Partitioned'
+                note left : is_partitioned == True 이면 table_request에 정보 추가
+                m.i.s.d.common_db_source.py -> m.i.s.d.common_db_source.py : table_request.tablePartition = partition_details
+
+                m.i.s.d.common_db_source.py -> m.i.a.topology_runner.py -- : yield Either(right=table_request): CreateTableRequest()
+              end
+
+== table node - life_cycle stage ==
+              loop for entity_request in stage_fn(element)
+                m.i.a.topology_runner.py -> m.i.s.d.database_service.py ++ : yield_life_cycle_data(element)
+                note left : 미구현
+                m.i.s.d.database_service.py -> m.i.a.topology_runner.py -- :
+              end
+
+            end
+
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''' stored_procedure node
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+== stored_procedure node ==
+            m.i.a.topology_runner.py -> m.i.s.d.common_db_source.py ++ : get_stored_procedures()
+            note left
+              node.producer
+              <b>HiveSource 미구현.
+              redshift 정도 구현됨
+            end note
+            m.i.s.d.common_db_source.py -> m.i.a.topology_runner.py -- :
+== stored_procedure node - stored_procedures stage ==
+          end
+        end
+      end
+    end
+  end
+
+  m.i.a.topology_runner.py -> m.i.s.d.h.metadata.py -- :
+  m.i.s.d.h.metadata.py -> oma.w.i.base.py -- : record in Iterator
+  loop for step in self.steps
+    oma.w.i.base.py -> m.i.s.metadata_rest.py ++ : step.run(record)
+    note left
+      metadata injest 는 step이 rest-sink만 존재
+    end note
+    m.i.s.metadata_rest.py -> oma.w.i.base.py -- :
+
+  end
+end
+oma.w.i.base.py -> oma.w.i.common.py -- :
+deactivate
+oma.w.i.common.py -> oma.w.i.common.py : workflow.stop()
+
+@enduml

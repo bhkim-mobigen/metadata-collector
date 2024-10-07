@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+participant airflow
+participant oma.w.workflow_factory.py
+
+== DAG 인스턴스 생성 ==
+
+activate airflow
+airflow -> oma.w.workflow_factory.py ++:
+oma.w.workflow_factory.py -> oma.w.workflow_factory.py : workflow = WorkflowFactory.create(<json path>)
+note left : workflow: IngestionPipeline(<json>)
+oma.w.workflow_factory.py -> oma.w.workflow_factory.py : WorkflowFactory.generate_dag()
+oma.w.workflow_factory.py -> oma.w.workflow_factory.py : DAG = WorkflowFactory.get_dag()
+oma.w.workflow_factory.py -> airflow : DAG
+deactivate
+
+@enduml

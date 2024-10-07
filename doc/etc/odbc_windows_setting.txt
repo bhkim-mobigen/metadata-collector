@@ -1,0 +1,37 @@
+2024.03.25(월) 윈도우 odbc 추가
+
+altibase odbc 추가
+- 윈도우용 altibase client 설치시 odbc 드라이버 설치 체크 (or 7.1 에서 odbc 드라이버 별도 설치)
+  . http://support.altibase.com/kr/product
+- 윈도우에서 odbc 추가 - 제어판에서 odbc 추가 참고
+  https://docs.altibase.com/display/arch/Altibase+ODBC+Development+Guide+in+Windows+Environment
+- 윈도우에서 odbc 추가 - 윈도우 제어판 -> 관리도구(윈도우 툴) -> ODBC 데이터원본 관리자(64비트) 에서 추가
+  . windows DSN Name : altibase7_dsn
+  . host : 192.168.107.43
+  . Port : 20300
+  . User : sys
+  . Password : manager
+  . Database : kac_test
+  . NLS_USE : UTF8
+
+tibero odbc 추가
+- tibero6(윈도우 or linux) 설치시 odbc 드라이버(64bit) 설치 체크
+  . 라이센스 발급 받아야 설치 가능
+- 윈도우에서 odbc 추가 : 제어판 -> 관리도구(윈도우 툴) -> ODBC 데이터원본 관리자(64비트) 에서 추가
+  . windows DSN Name : tibero6_seoul_dsn
+  . host : 192.168.107.43
+  . Port : 8629
+  . User : seoul_stg
+  . Password : etl_staging
+  . Database : big_portal
+
+tibero odbc python에서 사용
+- 아래 사이트에서 sqlalchemy-tibero clone : pip install sqlalchemy-tibero 가 안되서 직접 install 수행
+  . https://github.com/cpyang/sqlalchemy-tibero/tree/master
+- pycharm으로 열어 venv 환경 설정 해준다. 3.9 로 했음.
+- (venv) python setup.py install 수행히준다.
+- 아래 빌드 결과물을, 사용할 프로젝트의 venv/Lib/site-packages/ ( or lib경로 만들어 복사 후 src 경로로 지정) 하위 경로에 복사해준다.
+  . sqlalchemy-tibero/build/lib/sqlalchemy_tibero
+  . sqlalchemy-tibero/sqlalchemy_tibero.egg-info
+- pyodbc 테스트 수행한다.
+  . multiline_query.py --dbms=tibero --host=tibero6_seoul_dsn --user=seoul_stg --passwd=etl_staging --db=big_portal

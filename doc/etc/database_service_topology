@@ -1,0 +1,46 @@
+# root node
+root = TopologyNode(
+    producer="get_services",
+    stages=[
+        NodeStage(
+            type_=DatabaseService,
+            processor="yield_create_request_database_service",
+        ),
+    ],
+    children=["database"],
+)
+
+# depth 1 node
+database = TopologyNode(
+    producer="get_database_names",
+    stages=[
+        NodeStage(
+            type_=Database,
+            processor="yield_database",
+        )
+    ],
+    children=["databaseSchema"],
+)
+
+# depth 2 node
+databaseSchema = TopologyNode(
+    producer="get_database_schema_names",
+    stages=[
+        NodeStage(
+            type_=DatabaseSchema,
+            processor="yield_database_schema",
+        ),
+    ],
+    children=["table"],
+)
+
+# depth 3 node
+table = TopologyNode(
+    producer="get_tables_name_and_type",
+    stages=[
+        NodeStage(
+            type_=Table,
+            processor="yield_table",
+        ),
+    ],
+)
