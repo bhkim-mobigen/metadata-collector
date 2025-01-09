@@ -23,6 +23,10 @@ with DAG(dag_id="metadata_ingestion", start_date=datetime(2024, 8, 28), schedule
 
     command_list = get_command_list()
 
-    ssh_task = SSHOperator.partial(task_id='run_ingestion', ssh_conn_id='otdev01-vm04').expand(
+    ssh_task = SSHOperator.partial(task_id='run_ingestion', ssh_conn_id='otdev01-vm04',conn_timeout=60,
+        cmd_timeout=None,
+        environment={
+              "KeepAlive":"yes"
+        }).expand(
         command=command_list
     )
