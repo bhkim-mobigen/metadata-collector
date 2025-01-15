@@ -13,20 +13,20 @@ with DAG(dag_id="metadata_ingestion", start_date=datetime(2024, 8, 28), schedule
     def get_command_list():
         hook = PostgresHook(postgres_conn_id='postgres-72')
 
-        rows = hook.get_records("select systemname from tb_meta_system_info where useyn is true")
+        rows = hook.get_records("select system_name from tb_meta_system_info where collect_flag is true")
 
         command_list = []
         for row in rows:
-            command_list.append(f"sh /home/otdev/ot_data_catalog_svr/meta_data_collect.sh {row[0]}")
+            command_list.append(f"sh /home/otdev/ot_data_catalog_server/metadata_collector/bin/meta_data_collect.sh {row[0]}")
 
         return command_list
 
     command_list = get_command_list()
 
     ssh_task = SSHOperator.partial(task_id='run_ingestion', ssh_conn_id='otdev01-vm04',conn_timeout=60,
-        cmd_timeout=None,
-        environment={
-              "KeepAlive":"yes"
-        }).expand(
+                                   cmd_timeout=None,
+                                   environment={
+                                       "KeepAlive":"yes"
+                                   }).expand(
         command=command_list
     )
