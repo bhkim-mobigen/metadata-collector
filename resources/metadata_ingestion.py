@@ -13,7 +13,7 @@ with DAG(dag_id="metadata_ingestion", start_date=datetime(2024, 8, 28), schedule
     def get_command_list():
         hook = PostgresHook(postgres_conn_id='postgres-72')
 
-        rows = hook.get_records("select system_name from tb_meta_system_info where collect_flag is true")
+        rows = hook.get_records("select system_id from tb_meta_system_info where collect_flag is true")
 
         command_list = []
         for row in rows:
