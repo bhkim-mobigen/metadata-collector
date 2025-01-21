@@ -2,12 +2,13 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import task
-
 from airflow.providers.ssh.operators.ssh import SSHOperator
-
 from airflow.hooks.postgres_hook import PostgresHook
+import pendulum
 
-with DAG(dag_id="metadata_ingestion", start_date=datetime(2024, 8, 28), schedule="0 * * * *") as dag:
+KST = pendulum.timezone("Asia/Seoul")
+
+with DAG(dag_id="metadata_ingestion", start_date=datetime(2024, 8, 28, tzinfo=KST), schedule="0 * * * *", catchup=False) as dag:
 
     @task()
     def get_command_list():
