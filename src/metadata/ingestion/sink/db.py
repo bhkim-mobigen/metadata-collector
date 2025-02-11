@@ -2,11 +2,11 @@ from typing import Optional, Dict, List, TypeVar
 from sqlmodel import Field, SQLModel
 from pydantic import BaseModel
 
-from metadata.config.common import ConfigModel
-from metadata.ingestion.api.models import Either
-from metadata.ingestion.api.steps import Sink
-from metadata.ingestion.ometa.ometa_api import OpenMetadata
-from metadata.utils.logger import get_log_name, ingestion_logger
+from src.metadata.config.common import ConfigModel
+from src.metadata.ingestion.api.models import Either
+from src.metadata.ingestion.api.steps import Sink
+from src.metadata.ingestion.ometa.ometa_api import OpenMetadata
+from src.metadata.utils.logger import get_log_name, ingestion_logger
 
 from app.utils.dateutil import datetime_to_str
 from datetime import datetime
