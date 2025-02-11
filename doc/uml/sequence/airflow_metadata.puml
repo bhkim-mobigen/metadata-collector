@@ -188,7 +188,7 @@ oma.w.i.metadata.py -> oma.w.i.metadata.py -- : OpenMetadataWorkflowConfig
 note left
     OpenMetadataWorkflowConfig(
         source=build_source(ingestion_pipeline),
-        # from src.metadata.ingestion.sink.metadata_rest import MetadataRestSink 를 의미
+        # from metadata.ingestion.sink.metadata_rest import MetadataRestSink 를 의미
         sink=Sink(
             type="metadata-rest",
             config={},

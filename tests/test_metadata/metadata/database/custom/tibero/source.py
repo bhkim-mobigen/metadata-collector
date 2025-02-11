@@ -2,8 +2,8 @@ from test_metadata.metadata.database.test_database_source import TestDatabaseSou
 class TestTiberoSource(TestDatabaseSource):
 
     def getSourceConfig(self):
-        from src.metadata.generated.schema.metadataIngestion.workflow import SourceConfig
-        from src.metadata.generated.schema.metadataIngestion.databaseServiceMetadataPipeline import DatabaseServiceMetadataPipeline
+        from metadata.generated.schema.metadataIngestion.workflow import SourceConfig
+        from metadata.generated.schema.metadataIngestion.databaseServiceMetadataPipeline import DatabaseServiceMetadataPipeline
         sourceConfig = SourceConfig(config=DatabaseServiceMetadataPipeline(**{
             "type": "DatabaseMetadata",
             "markDeletedTables": False,
@@ -31,8 +31,8 @@ class TestTiberoSource(TestDatabaseSource):
         return sourceConfig
 
     def getServiceConnection(self):
-        from src.metadata.generated.schema.entity.services.databaseService import DatabaseConnection
-        from src.metadata.generated.schema.entity.services.connections.database.customDatabaseConnection import \
+        from metadata.generated.schema.entity.services.databaseService import DatabaseConnection
+        from metadata.generated.schema.entity.services.connections.database.customDatabaseConnection import \
             CustomDatabaseConnection
 
         serviceConnection = DatabaseConnection(config=CustomDatabaseConnection(**{

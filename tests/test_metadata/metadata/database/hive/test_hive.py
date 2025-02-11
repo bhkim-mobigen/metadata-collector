@@ -1,4 +1,4 @@
-from src.metadata.generated.schema.entity.services.databaseService import DatabaseServiceType
+from metadata.generated.schema.entity.services.databaseService import DatabaseServiceType
 service_type = DatabaseServiceType.Hive
 
 from test_metadata.metadata.database.hive.source import TestHiveSource
