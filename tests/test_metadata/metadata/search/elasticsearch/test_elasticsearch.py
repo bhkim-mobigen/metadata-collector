@@ -1,4 +1,4 @@
-from metadata.generated.schema.entity.services.searchService import SearchServiceType
+from src.metadata.generated.schema.entity.services.searchService import SearchServiceType
 service_type = SearchServiceType.ElasticSearch
 
 from test_metadata.metadata.search.elasticsearch.source import TestElasticSearchSource

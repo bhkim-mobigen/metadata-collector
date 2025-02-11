@@ -1,6 +1,6 @@
-from metadata.generated.schema.metadataIngestion.workflow import Source
-from metadata.generated.schema.metadataIngestion.workflow import SourceConfig
-from metadata.generated.schema.entity.services.searchService import SearchConnection
+from src.metadata.generated.schema.metadataIngestion.workflow import Source
+from src.metadata.generated.schema.metadataIngestion.workflow import SourceConfig
+from src.metadata.generated.schema.entity.services.searchService import SearchConnection
 
 from test_metadata.metadata.common.test_source import TestSource
 class TestSearchSource(TestSource):

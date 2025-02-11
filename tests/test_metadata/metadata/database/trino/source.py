@@ -2,8 +2,8 @@ from test_metadata.metadata.database.test_database_source import TestDatabaseSou
 class TestTrinoSource(TestDatabaseSource):
 
     def getSourceConfig(self):
-        from metadata.generated.schema.metadataIngestion.workflow import SourceConfig
-        from metadata.generated.schema.metadataIngestion.databaseServiceMetadataPipeline import DatabaseServiceMetadataPipeline
+        from src.metadata.generated.schema.metadataIngestion.workflow import SourceConfig
+        from src.metadata.generated.schema.metadataIngestion.databaseServiceMetadataPipeline import DatabaseServiceMetadataPipeline
         sourceConfig = SourceConfig(config=DatabaseServiceMetadataPipeline(**{
             "type": "DatabaseMetadata",
             "markDeletedTables": False,
@@ -31,8 +31,8 @@ class TestTrinoSource(TestDatabaseSource):
         return sourceConfig
 
     def getServiceConnection(self):
-        from metadata.generated.schema.entity.services.databaseService import DatabaseConnection
-        from metadata.generated.schema.entity.services.connections.database.trinoConnection import \
+        from src.metadata.generated.schema.entity.services.databaseService import DatabaseConnection
+        from src.metadata.generated.schema.entity.services.connections.database.trinoConnection import \
             TrinoConnection
 
         serviceConnection = DatabaseConnection(config=TrinoConnection(**{

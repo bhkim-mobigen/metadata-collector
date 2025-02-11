@@ -1,4 +1,4 @@
-from metadata.generated.schema.entity.services.databaseService import DatabaseServiceType
+from src.metadata.generated.schema.entity.services.databaseService import DatabaseServiceType
 service_type = DatabaseServiceType.Mssql
 
 from test_metadata.metadata.database.mssql.source import TestMssqlSource

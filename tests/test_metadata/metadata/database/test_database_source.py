@@ -1,7 +1,7 @@
-from metadata.generated.schema.entity.services.databaseService import DatabaseServiceType
-from metadata.generated.schema.metadataIngestion.workflow import Source
-from metadata.generated.schema.metadataIngestion.workflow import SourceConfig
-from metadata.generated.schema.entity.services.databaseService import DatabaseConnection
+from src.metadata.generated.schema.entity.services.databaseService import DatabaseServiceType
+from src.metadata.generated.schema.metadataIngestion.workflow import Source
+from src.metadata.generated.schema.metadataIngestion.workflow import SourceConfig
+from src.metadata.generated.schema.entity.services.databaseService import DatabaseConnection
 
 from test_metadata.metadata.common.test_source import TestSource
 class TestDatabaseSource(TestSource):

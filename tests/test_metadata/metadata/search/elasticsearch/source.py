@@ -2,8 +2,8 @@ from test_metadata.metadata.search.test_search_source import TestSearchSource
 class TestElasticSearchSource(TestSearchSource):
 
     def getSourceConfig(self):
-        from metadata.generated.schema.metadataIngestion.workflow import SourceConfig
-        from metadata.generated.schema.metadataIngestion.searchServiceMetadataPipeline import SearchServiceMetadataPipeline
+        from src.metadata.generated.schema.metadataIngestion.workflow import SourceConfig
+        from src.metadata.generated.schema.metadataIngestion.searchServiceMetadataPipeline import SearchServiceMetadataPipeline
         sourceConfig = SourceConfig(config=SearchServiceMetadataPipeline(**{
             "type": "SearchMetadata",
             "searchIndexFilterPattern": {
@@ -16,8 +16,8 @@ class TestElasticSearchSource(TestSearchSource):
         return sourceConfig
 
     def getServiceConnection(self):
-        from metadata.generated.schema.entity.services.searchService import SearchConnection
-        from metadata.generated.schema.entity.services.connections.search.elasticSearchConnection import ElasticsearchConnection
+        from src.metadata.generated.schema.entity.services.searchService import SearchConnection
+        from src.metadata.generated.schema.entity.services.connections.search.elasticSearchConnection import ElasticsearchConnection
 
         serviceConnection = SearchConnection(config=ElasticsearchConnection(**{
             "type": "ElasticSearch",

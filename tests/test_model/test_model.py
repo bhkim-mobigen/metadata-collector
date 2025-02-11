@@ -1,5 +1,5 @@
 from app.utils.client import SqlalchemyOrmClient, postgresql_url
-from metadata.ingestion.sink.db import Metadata
+from src.metadata.ingestion.sink.db import Metadata
 from datetime import datetime
 
 def get_client(db_host):

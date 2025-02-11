@@ -1,14 +1,14 @@
-from metadata.generated.schema.metadataIngestion.workflow import (
+from src.metadata.generated.schema.metadataIngestion.workflow import (
     WorkflowConfig,
 )
-from metadata.generated.schema.metadataIngestion.workflow import (
+from src.metadata.generated.schema.metadataIngestion.workflow import (
     OpenMetadataWorkflowConfig,
     Sink,
 )
-from metadata.generated.schema.metadataIngestion.workflow import Source
-from metadata.generated.schema.entity.services.pipelineService import PipelineServiceType
-from metadata.generated.schema.entity.services.databaseService import DatabaseServiceType
-from metadata.generated.schema.entity.services.searchService import SearchServiceType
+from src.metadata.generated.schema.metadataIngestion.workflow import Source
+from src.metadata.generated.schema.entity.services.pipelineService import PipelineServiceType
+from src.metadata.generated.schema.entity.services.databaseService import DatabaseServiceType
+from src.metadata.generated.schema.entity.services.searchService import SearchServiceType
 
 from typing import Union
 from abc import ABC, abstractmethod
@@ -43,8 +43,8 @@ class TestSource(ABC):
         return config
 
     def __getWorkflowConfig(self) -> WorkflowConfig:
-        from metadata.generated.schema.metadataIngestion.workflow import LogLevels
-        from metadata.generated.schema.entity.services.connections.metadata.openMetadataConnection import (
+        from src.metadata.generated.schema.metadataIngestion.workflow import LogLevels
+        from src.metadata.generated.schema.entity.services.connections.metadata.openMetadataConnection import (
             OpenMetadataConnection,
         )
 
