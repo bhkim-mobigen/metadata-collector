@@ -5,6 +5,14 @@ WORKDIR /home/otdev/ot_data_catalog_server/metadata_collector
 # PYTHONPATH 환경 변수 설정
 ENV PYTHONPATH="/home/otdev/ot_data_catalog_server/metadata_collector/src:$PYTHONPATH"
 
+# 시스템 의존성 설치
+RUN yum -y groupinstall "Development Tools" && \
+    yum -y install libcouchbase-devel cyrus-sasl-devel && \
+    yum clean all
+
+# Python 의존성 설치
+RUN pip install --upgrade pip setuptools wheel
+
 COPY ./requirements.txt /home/otdev/ot_data_catalog_server/metadata_collector/requirements.txt
 RUN pip install --no-cache-dir -r /home/otdev/ot_data_catalog_server/metadata_collector/requirements.txt
 
