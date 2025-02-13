@@ -13,3 +13,4 @@ COPY ./conf /home/otdev/ot_data_catalog_server/metadata_collector/conf
 COPY ./src /home/otdev/ot_data_catalog_server/metadata_collector/src
 COPY ./metadata_collector_main.py /home/otdev/ot_data_catalog_server/metadata_collector/metadata_collector_main.py
 
+CMD ["tail", "-f", "/dev/null"]
