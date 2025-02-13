@@ -52,16 +52,15 @@ WORKDIR /home/otdev/ot_data_catalog_server/metadata_collector
 
 COPY ./setup.py /home/otdev/ot_data_catalog_server/metadata_collector/setup.py
 
-# 4. 의존성 설치
-RUN python setup.py install
-RUN pip install ingest-server[all]
-
-
 # 3. 프로젝트 파일들을 컨테이너로 복사
 COPY .env /home/otdev/ot_data_catalog_server/metadata_collector/.env
 COPY ./conf /home/otdev/ot_data_catalog_server/metadata_collector/conf
 COPY ./src /home/otdev/ot_data_catalog_server/metadata_collector/src
 COPY ./metadata_collector_main.py /home/otdev/ot_data_catalog_server/metadata_collector/metadata_collector_main.py
+
+# 4. 의존성 설치
+RUN python setup.py install
+RUN pip install ingest-server[all]
 
 # 5. 프로젝트 실행 (필요에 따라 수정)
 CMD ["tail", "-f", "/dev/null"]
