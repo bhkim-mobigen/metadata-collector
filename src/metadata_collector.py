@@ -133,15 +133,15 @@ def get_meta_system_info(system_id, host, port):
 
     password = SecurityManager.decodeWithcryptkey(result[5])
 
-    # return result[0], result[1], hostport, result[4], password, result[6], source_filter
+    return result[0], result[1], hostport, result[4], password, result[6], source_filter
     # source_filter = get_source_filter('Mssql', 'otdevDB', None)
     # source_filter = get_source_filter('Postgres', 'data_catalog', None)
-    source_filter = get_source_filter('Oracle', 'otdev', None)
-    print(source_filter)
-    #system_id, system_type, host:port, login, password, database
+    # source_filter = get_source_filter('Oracle', 'otdev', None)
+    # print(source_filter)
+    # system_id, system_type, host:port, login, password, database
     # return 'phy-mssql', 'Mssql', '192.168.100.110:1433', 'otdev', 'otdev123!', 'otdevDB', source_filter
     # return 'test', 'Postgres', '192.168.100.72:5432', 'data_catalog', 'otdev123', 'data_catalog', source_filter
-    return 'test', 'Oracle', '192.168.100.98:1521', 'otdev', 'otdev123', 'otdev', source_filter
+    # return 'test', 'Oracle', '192.168.100.98:1521', 'otdev', 'otdev123', 'otdev', source_filter
 
 def set_meta_system_status(system_id, status):
     from app.utils.client import SqlalchemyOrmClient, postgresql_url
