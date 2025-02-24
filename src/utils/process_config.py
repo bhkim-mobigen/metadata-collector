@@ -33,8 +33,8 @@ class Config(BaseSettings):
 
         metadata_manager_api_config = config_data["metadata_manager.api"]
 
-        sink_host = metadata_manager_api_config[host]
-        sink_port = metadata_manager_api_config[port]
+        sink_host = metadata_manager_api_config["host"]
+        sink_port = metadata_manager_api_config["port"]
 
         metadata_manager_base_url = f"http://{metadata_manager_api_config['host']}:{metadata_manager_api_config['port']}{metadata_manager_api_config['prefix']}"
         get_meta_system_info_api = metadata_manager_api_config['get_meta_system_info_api']
