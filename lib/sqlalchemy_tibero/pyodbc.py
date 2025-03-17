@@ -15,7 +15,7 @@ Connecting
 Examples of pyodbc connection string URLs:
 * ``tibero+pyodbc://mydsn`` - connects using the specified DSN named ``mydsn``.
 """
-from base import TiberoExecutionContext, TiberoDialect, NCLOB
+from .base import TiberoExecutionContext, TiberoDialect, NCLOB
 from sqlalchemy.connectors.pyodbc import PyODBCConnector
 from sqlalchemy import types as sqltypes, util
 from sqlalchemy.types import BLOB, CHAR, CLOB, FLOAT, INTEGER, NCHAR, NVARCHAR, TIMESTAMP, VARCHAR
