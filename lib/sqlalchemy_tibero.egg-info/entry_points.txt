@@ -1,3 +1,0 @@
-[sqlalchemy.dialects]
-tibero.pyodbc = sqlalchemy_tibero.pyodbc:TiberoDialect_pyodbc
-
