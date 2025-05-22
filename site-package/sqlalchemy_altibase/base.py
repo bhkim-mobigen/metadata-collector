@@ -284,6 +284,10 @@ class BYTE(sqltypes.TypeEngine):
     __visit_name__ = "BYTE"
 
 
+class VARBYTE(sqltypes.TypeEngine):
+    __visit_name__ = "VARBYTE"
+
+
 class BIT(sqltypes.BINARY):
     __visit_name__ = "BIT"
 
@@ -303,6 +307,9 @@ class GEOMETRY(sqltypes.TypeEngine):
 class AltibaseTypeCompiler(oracle_base.OracleTypeCompiler):
     def visit_BYTE(self, type_, **kw):
         return "BYTE"
+
+    def visit_VARBYTE(self, type_, **kw):
+        return "VARBYTE(%d)" % type_.length
 
     def visit_BIT(self, type_, **kw):
         return "BIT"
@@ -336,6 +343,7 @@ ischema_names = {
     "SMALLINT": SMALLINT,
     "DATE": DATE,
     "BYTE": BYTE,
+    "VARBYTE": VARBYTE, # add
     "NIBBLE": NIBBLE,
     "BIT": BIT,
     "VARBIT": VARBIT,
@@ -505,7 +513,7 @@ class AltibaseDialect(default.DefaultDialect):
             SELECT U.USER_NAME USER_NAME
             , T.TABLE_NAME TABLE_NAME
             , C.COLUMN_NAME COLUMN_NAME
-            , DECODE(C.DATA_TYPE, 1, 'CHAR', 12, 'VARCHAR', -8, 'NCHAR', -9, 'NVARCHAR', 2, 'DECIMAL', 6, 'FLOAT', 8, 'DOUBLE', 7, 'REAL', -5, 'BIGINT', 4, 'INTEGER', 5, 'SMALLINT', 9, 'DATE', 30, 'BLOB', 40, 'CLOB', 20001, 'BYTE', 20002, 'NIBBLE', -7, 'BIT', -100, 'VARBIT', 10003, 'GEOMETRY') DATA_TYPE
+            , DECODE(C.DATA_TYPE, 1, 'CHAR', 12, 'VARCHAR', -8, 'NCHAR', -9, 'NVARCHAR', 2, 'DECIMAL', 6, 'FLOAT', 8, 'DOUBLE', 7, 'REAL', -5, 'BIGINT', 4, 'INTEGER', 5, 'SMALLINT', 9, 'DATE', 30, 'BLOB', 40, 'CLOB', 20001, 'BYTE', 20002, 'NIBBLE', -7, 'BIT', -100, 'VARBIT', 10003, 'GEOMETRY', 20003, 'VARBYTE') DATA_TYPE
             , CASE WHEN (C.DATA_TYPE != 2 OR C.DATA_TYPE != 6) THEN C.PRECISION END AS CHAR_LENGTH_COL
             , DECODE(C.IS_NULLABLE, 'F', 'N', 'T', 'Y') NULLABLE
             , C.DEFAULT_VAL DATA_DEFAULT
