@@ -20,7 +20,7 @@ from sqlalchemy import schema as sa_schema
 from sqlalchemy.sql import compiler, expression, sqltypes, visitors
 from sqlalchemy.sql import util as sql_util
 from sqlalchemy.engine import default, reflection
-from sqlalchemy.types import BLOB, CHAR, CLOB, FLOAT, INTEGER, NCHAR, NVARCHAR, TIMESTAMP, VARCHAR
+from sqlalchemy.types import BLOB, CHAR, CLOB, FLOAT, INTEGER, NCHAR, NVARCHAR, TIME, TIMESTAMP, VARCHAR
 from sqlalchemy.util import compat
 
 import pyodbc
@@ -193,8 +193,10 @@ ischema_names = {
     "BFILE": BFILE,
     "CLOB": CLOB,
     "NCLOB": NCLOB,
+    "TIME": TIME,
     "TIMESTAMP": TIMESTAMP,
     "TIMESTAMP WITH TIME ZONE": TIMESTAMP,
+    "TIMESTAMP WITH LOCAL TIME ZONE": TIMESTAMP,
     "INTERVAL DAY TO SECOND": INTERVAL,
     "RAW": RAW,
     "FLOAT": FLOAT,
@@ -1375,20 +1377,27 @@ class TiberoDialect(default.DefaultDialect):
             colname = self.normalize_name(row[0])
             orig_colname = row[0]
             coltype = row[1]
-            length = row[2]
-            precision = row[3]
-            scale = row[4]
+            length = int(row[2]) if row[2] is not None else None
+            precision = int(row[3]) if row[3] is not None else None
+            scale = int(row[4]) if row[4] is not None else None
             nullable = row[5] == "Y"
             default = row[6]
             comment = row[7]
             generated = row[8]
             default_on_nul = row[9]
             identity_options = row[10]
-
+            system_data_type = None
+            
             if coltype == "NUMBER":
                 if precision is None and scale == 0:
                     coltype = INTEGER()
                 else:
+                    if precision and scale:
+                        system_data_type = f"{coltype}({precision},{scale})"
+                    elif precision:
+                        system_data_type = f"{coltype}({precision},0)"
+                    elif scale:
+                        system_data_type = f"{coltype}(0,{scale})"
                     coltype = NUMBER(precision, scale)
             elif coltype == "FLOAT":
                 # TODO: support "precision" here as "binary_precision"
@@ -1430,6 +1439,8 @@ class TiberoDialect(default.DefaultDialect):
                 "autoincrement": "auto",
                 "comment": comment,
             }
+            if system_data_type is not None:
+                cdict["system_data_type"] = system_data_type
             if orig_colname.lower() == orig_colname:
                 cdict["quote"] = True
             if computed is not None:

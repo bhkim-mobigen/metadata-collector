@@ -282,10 +282,14 @@ class _AltibaseUnitypeMixin(object):
 
 class BYTE(sqltypes.TypeEngine):
     __visit_name__ = "BYTE"
+    def __init__(self, length=None):
+        self.length = length
 
 
 class VARBYTE(sqltypes.TypeEngine):
     __visit_name__ = "VARBYTE"
+    def __init__(self, length=None):
+        self.length = length
 
 
 class BIT(sqltypes.BINARY):
@@ -298,6 +302,8 @@ class VARBIT(sqltypes.BINARY):
 
 class NIBBLE(sqltypes.TypeEngine):
     __visit_name__ = "NIBBLE"
+    def __init__(self, length=None):
+        self.length = length
 
 
 class GEOMETRY(sqltypes.TypeEngine):
@@ -514,7 +520,9 @@ class AltibaseDialect(default.DefaultDialect):
             , T.TABLE_NAME TABLE_NAME
             , C.COLUMN_NAME COLUMN_NAME
             , DECODE(C.DATA_TYPE, 1, 'CHAR', 12, 'VARCHAR', -8, 'NCHAR', -9, 'NVARCHAR', 2, 'DECIMAL', 6, 'FLOAT', 8, 'DOUBLE', 7, 'REAL', -5, 'BIGINT', 4, 'INTEGER', 5, 'SMALLINT', 9, 'DATE', 30, 'BLOB', 40, 'CLOB', 20001, 'BYTE', 20002, 'NIBBLE', -7, 'BIT', -100, 'VARBIT', 10003, 'GEOMETRY', 20003, 'VARBYTE') DATA_TYPE
-            , CASE WHEN (C.DATA_TYPE != 2 OR C.DATA_TYPE != 6) THEN C.PRECISION END AS CHAR_LENGTH_COL
+            , CASE WHEN (C.DATA_TYPE != 2 OR C.DATA_TYPE != 6) THEN (C.PRECISION + C.SCALE) END AS TOTAL_LENGTH_COL
+            , C.PRECISION AS PRECISION
+            , C.SCALE AS SCALE
             , DECODE(C.IS_NULLABLE, 'F', 'N', 'T', 'Y') NULLABLE
             , C.DEFAULT_VAL DATA_DEFAULT
             , COM.COMMENTS COMMENTS
@@ -538,10 +546,18 @@ class AltibaseDialect(default.DefaultDialect):
 
         columns = []
 
-        for user_name, table_name, column_name, data_type, char_length_col, nullable, data_default, comments in results:
-            if data_type in ("CHAR", "VARCHAR", "NCHAR", "NVARCHAR"):
-                data_type = self.ischema_names.get(data_type)(char_length_col)
+        for user_name, table_name, column_name, data_type, total_length_col, precision, scale, data_default, comments in results:
+            system_data_type = None
+            if data_type in ("CHAR", "VARCHAR", "NCHAR", "NVARCHAR", "BYTE", "VARBYTE", "NIBBLE"):
+                data_type = self.ischema_names.get(data_type)(total_length_col)
             else:
+                if data_type in ("DECIMAL", "NUMERIC", "NUMBER"):
+                    if precision and scale:
+                        system_data_type = f"{data_type}({precision},{scale})"
+                    elif precision:
+                        system_data_type = f"{data_type}({precision},0)"
+                    elif scale:
+                        system_data_type = f"{data_type}(0,{scale})"
                 try:
                     data_type = self.ischema_names[data_type]
                 except KeyError:
@@ -556,6 +572,8 @@ class AltibaseDialect(default.DefaultDialect):
                 "autoincrement": "auto",
                 "comment": comments,
             }
+            if system_data_type is not None:
+                column_dict["system_data_type"] = system_data_type
             columns.append(column_dict)
 
         return columns
