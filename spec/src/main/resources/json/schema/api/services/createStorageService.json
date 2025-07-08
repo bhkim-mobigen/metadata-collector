@@ -48,6 +48,10 @@
     "domain" : {
       "description": "Fully qualified name of the domain the Storage Service belongs to.",
       "type": "string"
+    },
+    "systemType": {
+      "description": "system type for data_catalog",
+      "type": "string"
     }
   },
   "required": ["name", "serviceType"],
