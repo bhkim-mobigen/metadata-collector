@@ -208,6 +208,20 @@
       "maxLength": 256,
       "pattern": "^((?!::).)*$"
     },
+    "partitionIntervalTypes": {
+      "javaType": "org.openmetadata.schema.type.PartitionIntervalTypes",
+      "description": "type of partition interval",
+      "type": "string",
+      "enum": [
+        "TIME-UNIT",
+        "INTEGER-RANGE",
+        "INGESTION-TIME",
+        "COLUMN-VALUE",
+        "INJECTED",
+        "ENUM",
+        "OTHER"
+      ]
+    },
     "tablePartition": {
       "type": "object",
       "javaType": "org.openmetadata.schema.type.TablePartition",
@@ -230,6 +244,25 @@
             "COLUMN-VALUE",
             "OTHER"
           ]
+        },
+        "interval": {
+          "type": "string",
+          "description": "partition interval , example hourly, daily, monthly."
+        }
+      },
+      "additionalProperties": false
+    },
+    "partitionColumnDetails": {
+      "type": "object",
+      "javaType": "org.openmetadata.schema.type.PartitionColumnDetails",
+      "description": "This schema defines the partition column of a table and format the partition is created.",
+      "properties": {
+        "columnName": {
+          "description": "List of column names corresponding to the partition.",
+          "type": "string"
+        },
+        "intervalType": {
+          "$ref": "#/definitions/partitionIntervalTypes"
         },
         "interval": {
           "type": "string",
@@ -788,6 +821,14 @@
           "description": "Table creation time.",
           "type": "string",
           "format": "date-time"
+        },
+        "customMetrics": {
+          "description": "Custom Metrics profile list bound to a column.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/customMetricProfile"
+          },
+          "default": null
         }
       },
       "required": [
