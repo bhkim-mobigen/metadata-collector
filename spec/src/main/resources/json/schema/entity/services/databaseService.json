@@ -55,7 +55,8 @@
         "UnityCatalog",
         "SAS",
         "Iceberg",
-        "Tibero"
+        "Tibero",
+        "Altibase"
       ],
       "javaEnums": [
         {
@@ -180,6 +181,9 @@
         },
         {
           "name": "Tibero"
+        },
+        {
+          "name": "Altibase"
         }
       ]
     },
@@ -309,6 +313,9 @@
             },
             {
               "$ref": "./connections/database/tiberoConnection.json"
+            },
+            {
+              "$ref": "./connections/database/altibaseConnection.json"
             }
           ]
         }
