@@ -546,7 +546,7 @@ class AltibaseDialect(default.DefaultDialect):
 
         columns = []
 
-        for user_name, table_name, column_name, data_type, total_length_col, precision, scale, data_default, comments in results:
+        for user_name, table_name, column_name, data_type, total_length_col, precision, scale, nullable, data_default, comments in results:
             system_data_type = None
             if data_type in ("CHAR", "VARCHAR", "NCHAR", "NVARCHAR", "BYTE", "VARBYTE", "NIBBLE"):
                 data_type = self.ischema_names.get(data_type)(total_length_col)
