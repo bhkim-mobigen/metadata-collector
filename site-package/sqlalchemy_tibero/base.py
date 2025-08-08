@@ -960,7 +960,7 @@ class TiberoDialect(default.DefaultDialect):
     def create_connect_args(self, url):
         opts = url.translate_connect_args()
         #print("XXXX" + url + "XXXX")
-        connectors = ["Driver=Tibero 6 ODBC Driver"]
+        connectors = ["Driver=Tibero 7 ODBC Driver"]
         user = opts.get("username", None)
         if user:
             connectors.append("USER=%s" % user)
