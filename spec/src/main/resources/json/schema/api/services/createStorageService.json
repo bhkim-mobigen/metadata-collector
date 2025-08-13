@@ -52,6 +52,12 @@
     "systemType": {
       "description": "system type for data_catalog",
       "type": "string"
+    },
+    "sourceHash": {
+      "description": "Source hash of the entity",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
     }
   },
   "required": ["name", "serviceType"],
