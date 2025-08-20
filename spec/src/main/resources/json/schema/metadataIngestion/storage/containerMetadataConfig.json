@@ -48,6 +48,12 @@
             "$ref": "../../entity/data/table.json#/definitions/column"
           },
           "default": null
+        },
+        "owner": {
+          "title": "Owner",
+          "description": "Owner of this entity",
+          "type": "string",
+          "default": null
         }
       },
       "required": ["dataPath"]
