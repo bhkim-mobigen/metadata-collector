@@ -23,16 +23,15 @@ from metadata.profiler.processor.runner import QueryRunner
 from metadata.readers.file.s3 import S3Reader
 from metadata.utils.local_dir import ensure_directory_exists
 from metadata.utils.logger import profiler_interface_registry_logger
-from metadata.utils.word.hwp_extractor import HwpMetadataExtractor
-from metadata.utils.word.ms_word_extractor import MsWordMetadataExtractor
 from metadata.utils.s3_utils import get_normalized_key
+from metadata.utils.image.pil_extractor import PilMetadataExtractor
 
 from utils.process_config import config
 
 logger = profiler_interface_registry_logger()
 
 
-class DocumentProfilerInterface(ProfilerInterface):
+class ImageProfilerInterface(ProfilerInterface):
     """
     Interface to interact with registry supporting
     sqlalchemy.
@@ -78,9 +77,9 @@ class DocumentProfilerInterface(ProfilerInterface):
         #     profile_sample_config = profile_sample_config,
         # )
 
-    def _get_document_data(self, bucket_name: str, key: str) -> Optional[str]:
+    def _get_file(self, bucket_name: str, key: str) -> Optional[str]:
         """
-        Read the word document from the bucket
+        Read the file from the bucket
         """
         local_dir_path = config.document_tmp_dir
         # 다운로드 디렉토리 확인 및 생성
@@ -110,15 +109,12 @@ class DocumentProfilerInterface(ProfilerInterface):
             if normalized_key is None:
                 return None
 
-            local_file_path = self._get_document_data(bucket_name, normalized_key)
+            local_file_path = self._get_file(bucket_name, normalized_key)
             if local_file_path is None:
                 return None
             file_extension = data_path.split('.')[-1]
-            if file_extension in [FileFormat.hwp.value, FileFormat.hwpx.value]:
-                return self.get_hwp_sample(local_file_path)
-            # elif file_extension == "docx" or file_extension == "doc":
-            elif file_extension == FileFormat.docx.value:
-                return self.get_word_sample(local_file_path)
+            if file_extension == FileFormat.jpeg.value:
+                return self.get_pil_sample(local_file_path)
             else:
                 logger.warn("Unsupported file type")
                 return None
@@ -127,14 +123,9 @@ class DocumentProfilerInterface(ProfilerInterface):
         finally:
             os.remove(local_file_path)
 
-    def get_hwp_sample(self, local_file_path):
-        hwp_extractor = HwpMetadataExtractor(local_file_path)
-        sample_data = hwp_extractor.get_sample_data(1000)
-        return sample_data
-
-    def get_word_sample(self, local_file_path):
-        word_extractor = MsWordMetadataExtractor(local_file_path)
-        sample_text = word_extractor.get_sample_data(1000)
+    def get_pil_sample(self, local_file_path):
+        extractor = PilMetadataExtractor(local_file_path)
+        sample_text = extractor.get_sample_data(300)
         return sample_text
 
     def _get_sampler(self):
