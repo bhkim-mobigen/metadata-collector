@@ -38,7 +38,7 @@
       "description": "This schema defines the file formats for the object/files within a container.",
       "javaInterfaces": ["org.openmetadata.schema.EnumInterface"],
       "type": "string",
-      "enum": ["zip", "gz", "zstd", "csv", "tsv", "xls", "xlsx", "json", "parquet", "avro", "doc", "docx", "hwp", "hwpx", "txt", "xml", "jpg", "jpeg", "png", "pdf", "none"],
+      "enum": ["zip", "gz", "zstd", "csv", "tsv", "xls", "xlsx", "json", "parquet", "avro", "doc", "docx", "hwp", "hwpx", "txt", "xml", "jpg", "jpeg", "png", "pdf", "bmp", "gif", "webp", "cr2", "nef", "arw", "orf", "tiff", "tif", "psd", "hdr", "exr", "none"],
       "javaEnums": [
         {"name": "Zip"},
         {"name": "Gz"},
@@ -60,6 +60,18 @@
         {"name": "Jpeg"},
         {"name": "Png"},
         {"name": "Pdf"},
+        {"name": "Bmp"},
+        {"name": "Gif"},
+        {"name": "Webp"},
+        {"name": "Cr2"},
+        {"name": "Nef"},
+        {"name": "Arw"},
+        {"name": "Orf"},
+        {"name": "Tiff"},
+        {"name": "Tif"},
+        {"name": "Psd"},
+        {"name": "Hdr"},
+        {"name": "Exr"},
         {"none": "None"}
       ]
     },
