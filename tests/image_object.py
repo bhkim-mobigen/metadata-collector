@@ -49,9 +49,14 @@ def get_image_object(file_path):
         if len(detected_objects) > 0:
             metadata["detected_objects"] = detected_objects
 
-        # # 4. 탐지 결과 시각화 (bounding box 그리기)
-        # annotated_frame = results[0].plot()
-        #
+        # 4. 탐지 결과 시각화 (bounding box 그리기)
+        annotated_frame = results[0].plot()
+
+        file_path_name = file_path.split(".")[0]
+        detected_file_path = f"{file_path_name}_detected_object.jpeg"
+        print(detected_file_path)
+        cv2.imwrite(detected_file_path, annotated_frame)
+
         # # 5. 결과 출력
         # cv2.imshow("YOLOv8 Detection", annotated_frame)
         # cv2.waitKey(0)
@@ -69,9 +74,9 @@ def get_image_object(file_path):
 
 def test_image_object():
     file_name = None
-    dir_path = "/Users/hy/workspace/ot_data_catalog_server/metadata_collector/tmp/image"
+    dir_path = "/Users/hy/workspace/ot_data_catalog_server/metadata_collector/tmp/image_resize"
 
-    file_name = "FastRawViewer-cr2.jpeg"
+    file_name = "1718890746_sample1.jpeg"
 
     reports = []
     for filename in os.listdir(dir_path):
