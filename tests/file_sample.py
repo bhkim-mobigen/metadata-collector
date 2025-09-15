@@ -19,7 +19,6 @@ def test_pdf_image(input_path=None):
         for i, page in enumerate(file):
             text = page.get_text()
             if any(kw in text for kw in keywords):
-                print("catch")
                 page_num = i + 1  # 목차 다음 페이지
         print(page_num)
         page = file.load_page(page_num)
@@ -83,7 +82,7 @@ def test_file_to_pdf(input_path):
 
 
 def test_file():
-    input_path = "/Users/hy/workspace/ot_data_catalog_server/metadata_collector/tmp/21fa8bff578442d39a336b568e0e7b28.xml"
+    input_path = "/Users/hy/workspace/ot_data_catalog_server/metadata_collector/tmp/국민연금공단_오픈API활용가이드_국민연금 가입현황_v2.0.docx"
 
     input_path = Path(input_path)
     output_dir = input_path.parent

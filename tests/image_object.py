@@ -15,7 +15,7 @@ def get_image_object(file_path):
     metadata = {}
     try:
         # 1. YOLOv8 모델 불러오기 (사전 학습된 모델)
-        model = YOLO("yolov8n.pt")  # 또는 yolov8s.pt, yolov8m.pt 등
+        model = YOLO("yolov8s.pt")  # 또는 yolov8s.pt, yolov8m.pt 등
 
         # 2. 이미지 불러오기
         image = cv2.imread(file_path)
