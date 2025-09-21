@@ -11,17 +11,18 @@ pip install ultralytics
 """
 
 def get_image_object(file_path):
-
+    import torch
+    print(f">>>>>{torch.cuda.is_available()}")
     metadata = {}
     try:
         # 1. YOLOv8 모델 불러오기 (사전 학습된 모델)
-        model = YOLO("yolov8s.pt")  # 또는 yolov8s.pt, yolov8m.pt 등
+        model = YOLO("yolov8n.pt")  # 또는 yolov8s.pt, yolov8m.pt 등
 
         # 2. 이미지 불러오기
         image = cv2.imread(file_path)
 
         # 3. 객체 탐지 수행
-        results = model(image)
+        results = model(image, imgsz=320)
 
         # 5. 탐지된 객체 정보 출력
         print("탐지된 객체 목록:")
@@ -74,9 +75,9 @@ def get_image_object(file_path):
 
 def test_image_object():
     file_name = None
-    dir_path = "/Users/hy/workspace/ot_data_catalog_server/metadata_collector/tmp/image_resize"
+    dir_path = "/Users/hayoung/workspace/metadata_collector/tmp"
 
-    file_name = "1718890746_sample1.jpeg"
+    file_name = "DStation_Cam1_7Ent_Hall_L_01_0000013.jpg"
 
     reports = []
     for filename in os.listdir(dir_path):
