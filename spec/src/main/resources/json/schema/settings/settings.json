@@ -35,7 +35,8 @@
   "properties": {
     "config_type": {
       "description": "Unique identifier that identifies an entity instance.",
-      "$ref": "#/definitions/settingType"
+      "$ref": "#/definitions/settingType",
+      "default": null
     },
     "config_value": {
       "oneOf": [
@@ -73,7 +74,11 @@
           "$ref": "../configuration/profilerConfiguration.json"
         }
       ]
+    },
+    "detected_objects_model": {
+      "description": "image yolo detected objects model",
+      "default": null
     }
   },
-  "required": ["config_type"]
+  "required": []
 }
