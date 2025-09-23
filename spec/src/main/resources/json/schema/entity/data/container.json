@@ -153,7 +153,8 @@
     },
     "service": {
       "description": "Link to the storage service where this container is hosted in.",
-      "$ref": "../../type/entityReference.json"
+      "$ref": "../../type/entityReference.json",
+      "default": null
     },
     "parent": {
       "description": "Link to the parent container under which this entity sits, if not top level.",
@@ -294,8 +295,7 @@
   },
   "required": [
     "id",
-    "name",
-    "service"
+    "name"
   ],
   "additionalProperties": false
 }
