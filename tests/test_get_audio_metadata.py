@@ -1,6 +1,6 @@
-import parselmouth
-from pydub.utils import mediainfo
-from parselmouth.praat import call
+# import parselmouth
+# from parselmouth.praat import call
+
 import os
 """
 pip install praat-parselmouth==0.4.6
@@ -8,12 +8,18 @@ pip install pydub==0.25.1
 brew install praat
 sudo apt install ffmpeg
 sudo dnf install praat
+
+
+pip install eyed3 mutagen
+
 """
+
+from pydub.utils import mediainfo
 #https://sound-effects.bbcrewind.co.uk/search?cat=Daily_Life&durations=0-9
-def test_get_audio_metadata():
+def test_get_pydub_metadata():
 
     dir_path = "/Users/hy/workspace/metadata_collector/tmp/audio"
-    file_name = "bbc_dial-999--_07045242.mp3"
+    file_name = "03-01-01-01-01-01-01.wav"
 
 
     file_path = os.path.join(dir_path, file_name)
@@ -75,3 +81,102 @@ def test_get_audio_metadata():
 
 
 
+import eyed3
+def test_get_mp3_metadata():
+
+    dir_path = "/Users/hy/workspace/metadata_collector/tmp/audio"
+    file_name = "bbc_dial-999--_07045242.mp3"
+
+    file_path = os.path.join(dir_path, file_name)
+
+    audio_file = eyed3.load(file_path)
+
+
+    metadata = {
+        "title": audio_file.tag.title,
+        "artist": audio_file.tag.artist,
+        "album": audio_file.tag.album,
+        "track_num": audio_file.tag.track_num,
+        "genre": audio_file.tag.genre,
+        "duration": audio_file.info.time_secs,
+    }
+
+    for k, v in metadata.items():
+        print(f"{k} : {v}")
+
+
+from mutagen.mp3 import MP3
+def test_get_mutagen_mp3_metadata():
+
+    dir_path = "/Users/hy/workspace/metadata_collector/tmp/audio"
+    file_name = "bbc_dial-999--_07045242.mp3"
+
+    file_path = os.path.join(dir_path, file_name)
+
+    audio_file = MP3(file_path)
+    metadata = {
+        "duration": audio_file.info.length,
+        "sample_rate": audio_file.info.sample_rate,
+        "channels": audio_file.info.channels,
+    }
+
+    for k, v in metadata.items():
+        print(f"{k} : {v}")
+
+    print("=================")
+    for key, value in audio_file.tags.items():
+        print(f"{key}: {value}")
+
+    print("=================")
+    info = audio_file.info
+
+    for attr in dir(info):
+        if not attr.startswith("_"):
+            try:
+                value = getattr(info, attr)
+                print(f"{attr}: {value}")
+            except Exception as e:
+                print(f"{attr}: <error: {e}>")
+
+    print(">>>>>>>>>>>>>>>>")
+    for key, value in vars(info).items():  # 내부 __
+        print(f"{key}: {value}")
+
+from mutagen.wave import WAVE
+def test_get_wav_metadata():
+
+    dir_path = "/Users/hy/workspace/metadata_collector/tmp/audio"
+    file_name = "03-01-01-01-01-01-01.wav"
+
+    file_path = os.path.join(dir_path, file_name)
+
+    audio_file = WAVE(file_path)
+    metadata = {
+        "duration": audio_file.info.length,
+        "sample_rate": audio_file.info.sample_rate,
+        "channels": audio_file.info.channels,
+    }
+
+    for k, v in metadata.items():
+        print(f"{k} : {v}")
+
+
+    print("=================")
+    if audio_file.tags:
+        for key, value in audio_file.tags.items():
+            print(f"{key}: {value}")
+
+    print("=================")
+    info = audio_file.info
+
+    for attr in dir(info):
+        if not attr.startswith("_"):
+            try:
+                value = getattr(info, attr)
+                print(f"{attr}: {value}")
+            except Exception as e:
+                print(f"{attr}: <error: {e}>")
+
+    print(">>>>>>>>>>>>>>>>")
+    for key, value in vars(info).items():  # 내부 __
+        print(f"{key}: {value}")
