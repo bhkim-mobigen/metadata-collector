@@ -38,7 +38,7 @@
       "description": "This schema defines the file formats for the object/files within a container.",
       "javaInterfaces": ["org.openmetadata.schema.EnumInterface"],
       "type": "string",
-      "enum": ["zip", "gz", "zstd", "csv", "tsv", "xls", "xlsx", "json", "parquet", "avro", "doc", "docx", "hwp", "hwpx", "txt", "xml", "jpg", "jpeg", "png", "pdf", "bmp", "gif", "webp", "cr2", "nef", "arw", "orf", "tiff", "tif", "psd", "hdr", "exr", "wav", "mp3", "mp4", "none"],
+      "enum": ["zip", "gz", "zstd", "csv", "tsv", "xls", "xlsx", "json", "parquet", "avro", "doc", "docx", "hwp", "hwpx", "txt", "xml", "jpg", "jpeg", "png", "pdf", "bmp", "gif", "webp", "cr2", "nef", "arw", "orf", "tiff", "tif", "psd", "hdr", "exr", "wav", "mp3", "mp4", "mov", "m4v","none"],
       "javaEnums": [
         {"name": "Zip"},
         {"name": "Gz"},
@@ -75,6 +75,8 @@
         {"name": "Wav"},
         {"name": "Mp3"},
         {"name": "Mp4"},
+        {"name": "Mov"},
+        {"name": "M4v"},
         {"none": "None"}
       ]
     },
