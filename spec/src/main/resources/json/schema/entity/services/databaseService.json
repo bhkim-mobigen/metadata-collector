@@ -2,7 +2,7 @@
   "$id": "https://open-metadata.org/schema/entity/services/databaseService.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Database Service",
-  "description": "This schema defines the `Database Service` is a service such as MySQL, BigQuery, Redshift, Postgres, or Snowflake. Alternative terms such as Database Cluster, Database Server instance are also used for database service.",
+  "description": "This schema defines the `Database Service` as a service such as MySQL, Redshift, Postgres, or Snowflake. Alternative terms such as Database Cluster or Database Server instance are also used for database service.",
   "type": "object",
   "javaType": "org.openmetadata.schema.entity.services.DatabaseService",
   "javaInterfaces": [
@@ -11,11 +11,10 @@
   ],
   "definitions": {
     "databaseServiceType": {
-      "description": "Type of database service such as MySQL, BigQuery, Snowflake, Redshift, Postgres...",
+      "description": "Type of database service such as MySQL, Snowflake, Redshift, Postgres...",
       "javaInterfaces": ["org.openmetadata.schema.EnumInterface"],
       "type": "string",
       "enum": [
-        "BigQuery",
         "BigTable",
         "Mysql",
         "Redshift",
@@ -23,7 +22,6 @@
         "Postgres",
         "Mssql",
         "Oracle",
-        "Athena",
         "Hive",
         "Impala",
         "Presto",
@@ -32,10 +30,6 @@
         "Glue",
         "MariaDB",
         "Druid",
-        "Db2",
-        "Clickhouse",
-        "Databricks",
-        "AzureSQL",
         "DynamoDB",
         "SingleStore",
         "SQLite",
@@ -43,13 +37,11 @@
         "Salesforce",
         "PinotDB",
         "Datalake",
-        "DomoDatabase",
         "QueryLog",
         "CustomDatabase",
         "Dbt",
         "SapHana",
         "MongoDB",
-        "Couchbase",
         "Greenplum",
         "Doris",
         "UnityCatalog",
@@ -59,9 +51,6 @@
         "Altibase"
       ],
       "javaEnums": [
-        {
-          "name": "BigQuery"
-        },
         {
           "name": "BigTable"
         },
@@ -82,9 +71,6 @@
         },
         {
           "name": "Oracle"
-        },
-        {
-          "name": "Athena"
         },
         {
           "name": "Hive"
@@ -111,18 +97,6 @@
           "name": "Druid"
         },
         {
-          "name": "Db2"
-        },
-        {
-          "name": "Clickhouse"
-        },
-        {
-          "name": "Databricks"
-        },
-        {
-          "name": "AzureSQL"
-        },
-        {
           "name": "DynamoDB"
         },
         {
@@ -144,9 +118,6 @@
           "name": "Datalake"
         },
         {
-          "name": "DomoDatabase"
-        },
-        {
           "name": "QueryLog"
         },
         {
@@ -160,9 +131,6 @@
         },
         {
           "name": "MongoDB"
-        },
-        {
-          "name": "Couchbase"
         },
         {
           "name": "Greenplum"
@@ -198,25 +166,7 @@
           "mask": true,
           "oneOf": [
             {
-              "$ref": "./connections/database/bigQueryConnection.json"
-            },
-            {
               "$ref": "./connections/database/bigTableConnection.json"
-            },
-            {
-              "$ref": "./connections/database/athenaConnection.json"
-            },
-            {
-              "$ref": "./connections/database/azureSQLConnection.json"
-            },
-            {
-              "$ref": "./connections/database/clickhouseConnection.json"
-            },
-            {
-              "$ref": "./connections/database/databricksConnection.json"
-            },
-            {
-              "$ref": "./connections/database/db2Connection.json"
             },
             {
               "$ref": "./connections/database/deltaLakeConnection.json"
@@ -282,9 +232,6 @@
               "$ref": "./connections/database/datalakeConnection.json"
             },
             {
-              "$ref": "./connections/database/domoDatabaseConnection.json"
-            },
-            {
               "$ref": "./connections/database/customDatabaseConnection.json"
             },
             {
@@ -292,9 +239,6 @@
             },
             {
               "$ref": "./connections/database/mongoDBConnection.json"
-            },
-            {
-              "$ref": "./connections/database/couchbaseConnection.json"
             },
             {
               "$ref": "./connections/database/greenplumConnection.json"
@@ -341,7 +285,7 @@
       "type": "string"
     },
     "serviceType": {
-      "description": "Type of database service such as MySQL, BigQuery, Snowflake, Redshift, Postgres...",
+      "description": "Type of database service such as MySQL, Snowflake, Redshift, Postgres...",
       "$ref": "#/definitions/databaseServiceType"
     },
     "description": {

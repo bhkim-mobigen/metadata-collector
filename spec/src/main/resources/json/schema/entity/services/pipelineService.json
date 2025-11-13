@@ -18,14 +18,12 @@
       ],
       "enum": [
         "Airflow",
-        "GluePipeline",
+        "Glide",
         "Airbyte",
         "Fivetran",
         "Dagster",
         "Nifi",
-        "DomoPipeline",
         "CustomPipeline",
-        "DatabricksPipeline",
         "Spline",
         "Spark",
         "OpenLineage",
@@ -36,7 +34,7 @@
           "name": "Airflow"
         },
         {
-          "name": "GluePipeline"
+          "name": "Glide"
         },
         {
           "name": "Airbyte"
@@ -51,13 +49,7 @@
           "name": "Nifi"
         },
         {
-          "name": "DomoPipeline"
-        },
-        {
           "name": "CustomPipeline"
-        },
-        {
-          "name": "DatabricksPipeline"
         },
         {
           "name": "Spline"
@@ -103,13 +95,10 @@
               "$ref": "./connections/pipeline/nifiConnection.json"
             },
             {
-              "$ref": "./connections/pipeline/domoPipelineConnection.json"
-            },
-            {
               "$ref": "./connections/pipeline/customPipelineConnection.json"
             },
             {
-              "$ref": "./connections/pipeline/databricksPipelineConnection.json"
+              "$ref": "./connections/pipeline/glideConnection.json"
             },
             {
               "$ref": "./connections/pipeline/splineConnection.json"
