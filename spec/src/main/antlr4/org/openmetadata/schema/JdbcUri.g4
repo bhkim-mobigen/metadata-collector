@@ -25,13 +25,12 @@ DATABASE_TYPE
     : 'mysql'
     | 'postgresql'
     | 'oracle:thin'
+    | 'clickhouse'
     | 'trino'
     | 'presto'
     | 'vertica'
     | 'hive2'
     | 'redshift'
-    | 'druid'
-    | 'doris'
     ;
 
 URI_SEPARATOR

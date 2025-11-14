@@ -6,46 +6,46 @@
     "type": "object",
     "javaType": "org.openmetadata.schema.services.connections.database.UnityCatalogConnection",
     "definitions": {
-      "unityCatalogType": {
+      "databricksType": {
         "description": "Service type.",
         "type": "string",
         "enum": ["UnityCatalog"],
         "default": "UnityCatalog"
       },
-      "unityCatalogScheme": {
+      "databricksScheme": {
         "description": "SQLAlchemy driver scheme options.",
         "type": "string",
-        "enum": ["unitycatalog+connector"],
-        "default": "unitycatalog+connector"
+        "enum": ["databricks+connector"],
+        "default": "databricks+connector"
       }
     },
     "properties": {
       "type": {
         "title": "Service Type",
         "description": "Service Type",
-        "$ref": "#/definitions/unityCatalogType",
+        "$ref": "#/definitions/databricksType",
         "default": "UnityCatalog"
       },
       "scheme": {
         "title": "Connection Scheme",
         "description": "SQLAlchemy driver scheme options.",
-        "$ref": "#/definitions/unityCatalogScheme",
-        "default": "unitycatalog+connector"
+        "$ref": "#/definitions/databricksScheme",
+        "default": "databricks+connector"
       },
       "hostPort": {
         "title": "Host and Port",
-        "description": "Host and port of the Unity Catalog endpoint.",
+        "description": "Host and port of the Databricks service.",
         "type": "string"
       },
       "token": {
         "title": "Token",
-        "description": "Generated token to connect to Unity Catalog.",
+        "description": "Generated Token to connect to Databricks.",
         "type": "string",
         "format": "password"
       },
       "httpPath": {
         "title": "Http Path",
-        "description": "Unity Catalog compute resources URL.",
+        "description": "Databricks compute resources URL.",
         "type": "string"
       },
       "catalog": {

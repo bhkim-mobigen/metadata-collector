@@ -10,10 +10,10 @@
     "org.openmetadata.schema.EntityInterface"
   ],
   "definitions": {
-    "containerDataModel": {
+    "containerData": {
       "description": "This captures information about how the container's data is modeled, if it has a schema. ",
       "type": "object",
-      "javaType": "org.openmetadata.schema.type.ContainerDataModel",
+      "javaType": "org.openmetadata.schema.type.ContainerData",
       "properties": {
         "isPartitioned": {
           "description": "Whether the data under this container is partitioned by some property, eg. eventTime=yyyy-mm-dd",
@@ -171,7 +171,7 @@
     },
     "dataModel": {
       "description": "References to the container's data model, if data is structured, or null otherwise",
-      "$ref": "#/definitions/containerDataModel",
+      "$ref": "#/definitions/containerData",
       "default": null
     },
     "tableProfilerConfig": {

@@ -23,6 +23,7 @@
         "PowerBI",
         "Mode",
         "CustomDashboard",
+        "DomoDashboard",
         "QuickSight",
         "QlikSense",
         "Lightdash",
@@ -53,6 +54,9 @@
         },
         {
           "name": "CustomDashboard"
+        },
+        {
+          "name": "DomoDashboard"
         },
         {
           "name": "QuickSight"
@@ -105,6 +109,9 @@
             },
             {
               "$ref": "./connections/dashboard/customDashboardConnection.json"
+            },
+            {
+              "$ref": "./connections/dashboard/domoDashboardConnection.json"
             },
             {
               "$ref": "./connections/dashboard/quickSightConnection.json"

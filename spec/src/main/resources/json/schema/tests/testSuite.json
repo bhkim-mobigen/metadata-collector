@@ -78,13 +78,11 @@
       "default": null
     },
     "serviceType": {
-      "title": "Service Type",
-      "description": "Type of database service such as MySQL, Snowflake, Redshift, Postgres...",
+      "description": "Type of database service such as MySQL, BigQuery, Snowflake, Redshift, Postgres...",
       "javaInterfaces": ["org.openmetadata.schema.EnumInterface"],
       "type": "string",
       "enum": ["TestSuite"],
-      "default": "TestSuite",
-      "$ref": "../entity/services/databaseService.json#/definitions/databaseServiceType"
+      "default": "TestSuite"
     },
     "owner": {
       "description": "Owner of this TestCase definition.",

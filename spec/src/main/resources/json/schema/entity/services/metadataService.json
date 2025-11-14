@@ -83,9 +83,8 @@
       "type": "string"
     },
     "serviceType": {
-      "title": "Service Type",
-      "description": "Type of database service such as MySQL, Snowflake, Redshift, Postgres...",
-      "$ref": "./databaseService.json#/definitions/databaseServiceType"
+      "description": "Type of database service such as MySQL, BigQuery, Snowflake, Redshift, Postgres...",
+      "$ref": "#/definitions/metadataServiceType"
     },
     "description": {
       "description": "Description of a database service instance.",
