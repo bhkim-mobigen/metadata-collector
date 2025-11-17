@@ -23,6 +23,7 @@
         "Postgres",
         "Mssql",
         "Oracle",
+        "Athena",
         "Hive",
         "Impala",
         "Presto",
@@ -81,6 +82,9 @@
         },
         {
           "name": "Oracle"
+        },
+        {
+          "name": "Athena"
         },
         {
           "name": "Hive"
@@ -198,6 +202,9 @@
             },
             {
               "$ref": "./connections/database/bigTableConnection.json"
+            },
+            {
+              "$ref": "./connections/database/athenaConnection.json"
             },
             {
               "$ref": "./connections/database/azureSQLConnection.json"

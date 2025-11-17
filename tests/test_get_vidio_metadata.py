@@ -36,7 +36,7 @@ def get_metadata(data :dict, key):
 from pymediainfo import MediaInfo
 def test_get_mediainfo_metadata():
     dir_path = "/Users/hy/workspace/metadata_collector/tmp/vidio"
-    file_name = "sample_2560x1440.m4v"
+    file_name = "대전교통공사_지족역 지진대피장소_20221231.mp4"
 
     file_path = os.path.join(dir_path, file_name)
 
