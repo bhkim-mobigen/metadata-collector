@@ -25,6 +25,7 @@ DATABASE_TYPE
     : 'mysql'
     | 'postgresql'
     | 'oracle:thin'
+    | 'clickhouse'
     | 'trino'
     | 'presto'
     | 'vertica'

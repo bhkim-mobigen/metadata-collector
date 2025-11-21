@@ -32,6 +32,7 @@
         "MariaDB",
         "Druid",
         "Db2",
+        "Clickhouse",
         "Databricks",
         "AzureSQL",
         "DynamoDB",
@@ -107,6 +108,9 @@
         },
         {
           "name": "Db2"
+        },
+        {
+          "name": "Clickhouse"
         },
         {
           "name": "Databricks"
@@ -197,6 +201,9 @@
             },
             {
               "$ref": "./connections/database/azureSQLConnection.json"
+            },
+            {
+              "$ref": "./connections/database/clickhouseConnection.json"
             },
             {
               "$ref": "./connections/database/databricksConnection.json"
