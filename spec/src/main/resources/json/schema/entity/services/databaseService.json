@@ -47,7 +47,6 @@
         "Dbt",
         "SapHana",
         "MongoDB",
-        "Couchbase",
         "Greenplum",
         "Doris",
         "UnityCatalog",
@@ -152,9 +151,6 @@
         },
         {
           "name": "MongoDB"
-        },
-        {
-          "name": "Couchbase"
         },
         {
           "name": "Greenplum"
@@ -278,9 +274,6 @@
             },
             {
               "$ref": "./connections/database/mongoDBConnection.json"
-            },
-            {
-              "$ref": "./connections/database/couchbaseConnection.json"
             },
             {
               "$ref": "./connections/database/greenplumConnection.json"
