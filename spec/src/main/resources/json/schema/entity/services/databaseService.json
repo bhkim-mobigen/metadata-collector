@@ -38,13 +38,11 @@
         "SQLite",
         "DeltaLake",
         "Salesforce",
-        "PinotDB",
         "Datalake",
         "DomoDatabase",
         "QueryLog",
         "CustomDatabase",
         "Dbt",
-        "SapHana",
         "MongoDB",
         "Greenplum",
         "Doris",
@@ -125,9 +123,6 @@
           "name": "Salesforce"
         },
         {
-          "name": "PinotDB"
-        },
-        {
           "name": "Datalake"
         },
         {
@@ -141,9 +136,6 @@
         },
         {
           "name": "Dbt"
-        },
-        {
-          "name": "SapHana"
         },
         {
           "name": "MongoDB"
@@ -251,9 +243,6 @@
               "$ref": "./connections/database/verticaConnection.json"
             },
             {
-              "$ref": "./connections/database/pinotDBConnection.json"
-            },
-            {
               "$ref": "./connections/database/datalakeConnection.json"
             },
             {
@@ -261,9 +250,6 @@
             },
             {
               "$ref": "./connections/database/customDatabaseConnection.json"
-            },
-            {
-              "$ref": "./connections/database/sapHanaConnection.json"
             },
             {
               "$ref": "./connections/database/mongoDBConnection.json"
