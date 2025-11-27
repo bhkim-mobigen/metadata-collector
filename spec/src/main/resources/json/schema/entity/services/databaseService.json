@@ -32,7 +32,6 @@
         "MariaDB",
         "Druid",
         "Db2",
-        "AzureSQL",
         "DynamoDB",
         "SingleStore",
         "SQLite",
@@ -105,9 +104,6 @@
           "name": "Db2"
         },
         {
-          "name": "AzureSQL"
-        },
-        {
           "name": "DynamoDB"
         },
         {
@@ -178,9 +174,6 @@
             },
             {
               "$ref": "./connections/database/bigTableConnection.json"
-            },
-            {
-              "$ref": "./connections/database/azureSQLConnection.json"
             },
             {
               "$ref": "./connections/database/db2Connection.json"
