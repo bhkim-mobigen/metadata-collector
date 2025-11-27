@@ -25,7 +25,6 @@
         "Nifi",
         "DomoPipeline",
         "CustomPipeline",
-        "DatabricksPipeline",
         "Spline",
         "Spark",
         "OpenLineage",
@@ -55,9 +54,6 @@
         },
         {
           "name": "CustomPipeline"
-        },
-        {
-          "name": "DatabricksPipeline"
         },
         {
           "name": "Spline"
@@ -107,9 +103,6 @@
             },
             {
               "$ref": "./connections/pipeline/customPipelineConnection.json"
-            },
-            {
-              "$ref": "./connections/pipeline/databricksPipelineConnection.json"
             },
             {
               "$ref": "./connections/pipeline/splineConnection.json"
