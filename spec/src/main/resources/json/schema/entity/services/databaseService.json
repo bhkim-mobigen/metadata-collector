@@ -15,7 +15,6 @@
       "javaInterfaces": ["org.openmetadata.schema.EnumInterface"],
       "type": "string",
       "enum": [
-        "BigQuery",
         "BigTable",
         "Mysql",
         "Redshift",
@@ -51,9 +50,6 @@
         "Altibase"
       ],
       "javaEnums": [
-        {
-          "name": "BigQuery"
-        },
         {
           "name": "BigTable"
         },
@@ -165,9 +161,6 @@
         "config": {
           "mask": true,
           "oneOf": [
-            {
-              "$ref": "./connections/database/bigQueryConnection.json"
-            },
             {
               "$ref": "./connections/database/bigTableConnection.json"
             },
