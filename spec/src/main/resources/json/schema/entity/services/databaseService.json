@@ -36,6 +36,7 @@
         "SingleStore",
         "SQLite",
         "Salesforce",
+        "Datalake",
         "DomoDatabase",
         "QueryLog",
         "CustomDatabase",
@@ -112,6 +113,9 @@
         },
         {
           "name": "Salesforce"
+        },
+        {
+          "name": "Datalake"
         },
         {
           "name": "DomoDatabase"
@@ -223,6 +227,9 @@
             },
             {
               "$ref": "./connections/database/verticaConnection.json"
+            },
+            {
+              "$ref": "./connections/database/datalakeConnection.json"
             },
             {
               "$ref": "./connections/database/domoDatabaseConnection.json"
