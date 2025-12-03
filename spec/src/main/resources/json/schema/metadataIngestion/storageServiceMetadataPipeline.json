@@ -67,6 +67,12 @@
       "type": "boolean",
       "default": true,
       "title": "Mark Deleted Containers"
+    },
+    "threads": {
+      "description": "Number of Threads to use in order to paralellize Container/File ingestion.",
+      "type": "integer",
+      "default": 1,
+      "title": "Number of Threads"
     }
   },
   "additionalProperties": false
